@@ -25,10 +25,10 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
   // determine what page numbers to be displayed based on current page number
   // return an array
-  // e.g., 1 2 ... 19 20 21 (currentPage >= totalPage - 2)
   // e.g., 1 2 3 ... 20 21 (currentPage <= 3)
   // e.g., 1 ... 10 11 12 ... 21 (current page = 11)
   // e.g., 1 ... 4 5 6 ... 21 (current page = 5)
+  // e.g., 1 2 ... 19 20 21 (currentPage >= totalPage - 2)
   // e.g., 1 2 3 4 5 6 7 (totalPage <= 7)
   const allPages = generatePagination(currentPage, totalPages);
 
