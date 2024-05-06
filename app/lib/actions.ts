@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 
+// define a schema that matches the shape of a form object
 const FormSchema = z.object({
   id: z.string(),
   customerId: z.string(),
@@ -13,10 +14,12 @@ const FormSchema = z.object({
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function createInvoice(formData: FormData) {
+  // validate FormData data type
   const { customerId, amount, status } = CreateInvoice.parse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
-  // alternative: const rawFormData = Object.fromEntries(formData.entries())
+  // convert the amount into cents to avoid 'floating-point' errors
+  const amountInCents = amount * 100;
 }
