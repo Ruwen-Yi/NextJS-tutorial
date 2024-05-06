@@ -1,5 +1,7 @@
-'use server';
-
+'use server';       // all the exported functions within the file as server functions. 
+                    // These server functions can then be imported into Client and Server components.
+                    // React Server Actions allow you to run asynchronous code directly on the server
+                    
 import { z } from 'zod';
 
 // define a schema that matches the shape of a form object
