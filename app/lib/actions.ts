@@ -24,4 +24,6 @@ export async function createInvoice(formData: FormData) {
   });
   // convert the amount into cents to avoid 'floating-point' errors
   const amountInCents = amount * 100;
+  // create a new date with the format "YYYY-MM-DD" for the invoice's creation date
+  const date = new Date().toISOString().split('T')[0];
 }
