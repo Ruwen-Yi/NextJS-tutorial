@@ -4,6 +4,7 @@
                     
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
 
 // define a schema that matches the shape of a form object
 const FormSchema = z.object({
@@ -33,4 +34,7 @@ export async function createInvoice(formData: FormData) {
     INSERT INTO invoices (customer_id, amount, status, date)
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
+
+  // fetch fresh data from the server
+  revalidatePath('/dashboard/invoices');
 }
