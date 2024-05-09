@@ -3,6 +3,7 @@
                     // React Server Actions allow you to run asynchronous code directly on the server
                     
 import { z } from 'zod';
+import { sql } from '@vercel/postgres';
 
 // define a schema that matches the shape of a form object
 const FormSchema = z.object({
@@ -26,4 +27,10 @@ export async function createInvoice(formData: FormData) {
   const amountInCents = amount * 100;
   // create a new date with the format "YYYY-MM-DD" for the invoice's creation date
   const date = new Date().toISOString().split('T')[0];
+
+  // create an SQL query to insert the new invoice into database
+  await sql`
+    INSERT INTO invoices (customer_id, amount, status, date)
+    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+  `;
 }
