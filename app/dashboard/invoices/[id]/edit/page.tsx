@@ -1,8 +1,17 @@
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchCustomers } from '@/app/lib/data';
+import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
  
-export default async function Page() {
+export default async function Page({ params }: { params: { id: string } }) {
+  // read the invoice `id` from page params
+  const id = params.id;
+  
+  // fetch both the invoice and customers in parallel
+  const [invoice, customers] = await Promise.all([
+    fetchInvoiceById(id),
+    fetchCustomers(),
+  ]);
+
   return (
     <main>
       <Breadcrumbs
@@ -15,6 +24,8 @@ export default async function Page() {
           },
         ]}
       />
+
+      {/* The form should be pre-populated with a defaultValue for the customer's name, invoice amount, and status. */}
       <Form invoice={invoice} customers={customers} />
     </main>
   );
