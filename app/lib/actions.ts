@@ -1,10 +1,11 @@
-'use server';       // all the exported functions within the file as server functions. 
-                    // These server functions can then be imported into Client and Server components.
-                    // React Server Actions allow you to run asynchronous code directly on the server
-                    
+'use server'; // all the exported functions within the file as server functions.
+// These server functions can then be imported into Client and Server components.
+// React Server Actions allow you to run asynchronous code directly on the server
+
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 // define a schema that matches the shape of a form object
 const FormSchema = z.object({
@@ -37,4 +38,7 @@ export async function createInvoice(formData: FormData) {
 
   // fetch fresh data from the server
   revalidatePath('/dashboard/invoices');
+
+  // redirect the user back to the /dashboard/invoices page
+  redirect('/dashboard/invoices');
 }
