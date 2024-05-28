@@ -1,5 +1,7 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+// import a server function that can delete a data record in database
+import { deleteInvoice } from '@/app/lib/actions';
 
 export function CreateInvoice() {
   return (
@@ -25,12 +27,15 @@ export function UpdateInvoice({ id }: { id: string }) {
 }
 
 export function DeleteInvoice({ id }: { id: string }) {
+  // you should use JS bind to pass argument to the server action function 
+  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+  
   return (
-    <>
+    <form action={deleteInvoiceWithId}>
       <button className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
       </button>
-    </>
+    </ form>
   );
 }
