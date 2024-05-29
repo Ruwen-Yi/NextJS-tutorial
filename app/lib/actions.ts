@@ -30,16 +30,24 @@ export async function createInvoice(formData: FormData) {
   // create a new date with the format "YYYY-MM-DD" for the invoice's creation date
   const date = new Date().toISOString().split('T')[0];
 
-  // create an SQL query to insert the new invoice into database
-  await sql`
-    INSERT INTO invoices (customer_id, amount, status, date)
-    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  `;
+  try {
+    // create an SQL query to insert the new invoice into database
+    await sql`
+      INSERT INTO invoices (customer_id, amount, status, date)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+    `;
+  } catch (error) {
+    return {
+      message: 'Database Error: Failed to Create Invoice.',
+    };
+  }
 
   // fetch fresh data from the server
   revalidatePath('/dashboard/invoices');
 
   // redirect the user back to the /dashboard/invoices page
+  // redirect works by throwing an error, so it should be put outside of try/catch block
+  // otherwise redirect will be caught by catch block
   redirect('/dashboard/invoices');
 }
 
@@ -52,24 +60,32 @@ export async function updateInvoice(id: string, formData: FormData) {
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
- 
+
   const amountInCents = amount * 100;
- 
+
   // update the record in the database with new data
-  await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-    WHERE id = ${id}
-  `;
- 
+  try {
+    await sql`
+        UPDATE invoices
+        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+        WHERE id = ${id}
+      `;
+  } catch (error) {
+    return { message: 'Database Error: Failed to Update Invoice.' };
+  }
+
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 }
 
-// this action is being called in the /dashboard/invoices path, you don't need to call redirect. 
+// this action is being called in the /dashboard/invoices path, you don't need to call redirect.
 export async function deleteInvoice(id: string) {
+  try {
     await sql`DELETE FROM invoices WHERE id = ${id}`;
-
     // call revalidatePath will trigger a new server request and re-render the table.
     revalidatePath('/dashboard/invoices');
+    return { message: 'Deleted Invoice.' };
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete Invoice.' };
   }
+}
