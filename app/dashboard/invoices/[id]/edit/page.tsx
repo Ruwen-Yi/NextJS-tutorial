@@ -14,6 +14,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     fetchCustomers(),
   ]);
 
+  // throw an error, rendering the fallback UI (not-found.tsx) if any
+  // otherwise render a 'something went wrong' page
   if (!invoice) {
     notFound();
   }
