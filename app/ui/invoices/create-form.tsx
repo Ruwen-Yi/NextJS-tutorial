@@ -1,3 +1,4 @@
+'use client';  // in order to use useFormState hook
 import { CustomerField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
