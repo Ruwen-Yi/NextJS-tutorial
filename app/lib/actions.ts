@@ -24,7 +24,7 @@ const FormSchema = z.object({
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
-// This is temporary until @types/react-dom is updated
+// this is temporary until @types/react-dom is updated
 export type State = {
   errors?: {
     customerId?: string[];
@@ -35,12 +35,24 @@ export type State = {
 };
 
 export async function createInvoice(prevState: State, formData: FormData) {
-  // validate FormData data type
-  const { customerId, amount, status } = CreateInvoice.parse({
+  // validate form using Zod
+  // safeParse() returns an object containing either a success or error field. 
+  const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
   });
+ 
+  // if form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Invoice.',
+    };
+  }
+ 
+  // prepare data for insertion into the database
+  const { customerId, amount, status } = validatedFields.data;
   // convert the amount into cents to avoid 'floating-point' errors
   const amountInCents = amount * 100;
   // create a new date with the format "YYYY-MM-DD" for the invoice's creation date
