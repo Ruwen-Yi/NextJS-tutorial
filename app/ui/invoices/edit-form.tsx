@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 // import server action to update the record in database
 import { updateInvoice } from '@/app/lib/actions';
+import { useFormState } from 'react-dom';
 
 export default function EditInvoiceForm({
   invoice,
@@ -19,11 +20,13 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
-  // you should use JS bind to pass argument to server action function 
+  const initialState = { message: null, errors: {} };
+  // you should use JS bind to pass argument to server action function
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+  const [state, dispatch] = useFormState(updateInvoiceWithId, initialState);
 
   return (
-    <form action={updateInvoiceWithId}>
+    <form action={dispatch}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
