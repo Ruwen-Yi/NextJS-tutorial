@@ -23,12 +23,12 @@ export const { auth, signIn, signOut } = NextAuth({
     Credentials({
       // Prevent user from logging in without valid credentials or matched password
       async authorize(credentials) {
-        // 1. Validate the credentials
+        // 1. Validate the credentials with zod
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials);
         
-        // 2. Validate the password
+        // 2. Validate the password with bcrypt
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
