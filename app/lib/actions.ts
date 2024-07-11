@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 
 // define a schema that matches the shape of a form object
 const FormSchema = z.object({
@@ -123,5 +125,27 @@ export async function deleteInvoice(id: string) {
     return { message: 'Deleted Invoice.' };
   } catch (error) {
     return { message: 'Database Error: Failed to Delete Invoice.' };
+  }
+}
+
+// this action is to connect the auth logic with the login form.
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    // call the signIn function to handle user login
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    // if it is not an AuthError, throw the error
+    throw error;
   }
 }
