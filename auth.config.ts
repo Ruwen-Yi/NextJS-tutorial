@@ -2,7 +2,8 @@ import type { NextAuthConfig } from 'next-auth';
  
 export const authConfig = {
   pages: {
-    signIn: '/login', // Redirect users to our custom login page
+    // Redirect users to the custom login page
+    signIn: '/login', 
   },  
   callbacks: {
     // Prevent users from accessing the dashboard pages unless they are logged in.
@@ -13,10 +14,14 @@ export const authConfig = {
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       
       if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
+        // If a user is authenticated, allow them to access dashboard page.
+        if (isLoggedIn) return true; 
+        // If a user is unauthenticated, redirect them to login page.
+        return false; 
       } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+        // If a user is authenticated but not in dashboard page, 
+        //   redirect them to dashboard page.
+        return Response.redirect(new URL('/dashboard', nextUrl));  
       }
       
       return true;
