@@ -81,6 +81,7 @@ export default function LoginForm() {
 }
 
 function LoginButton() {
+  // handle the pending status: true if <form> is pending submission; otherwise, false
   const { pending } = useFormStatus();
  
   return (
